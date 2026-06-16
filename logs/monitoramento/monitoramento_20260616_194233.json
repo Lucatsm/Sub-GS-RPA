@@ -1,0 +1,10 @@
+[
+  {
+    "timestamp": "2026-06-16T19:42:33.504191",
+    "pid": 10010,
+    "processo": "python",
+    "cpu_percent": 0.0,
+    "memoria_percent": 0.19,
+    "status": "running"
+  }
+]

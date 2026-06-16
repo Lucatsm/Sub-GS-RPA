@@ -1,0 +1,29 @@
+snapshot_utc,pid,process_name,subsystem,state,cpu_pct,mem_kb,mem_pct,priority,threads,open_fds,elapsed_time,last_cpu_time_us,sched_policy,context_switches,description
+2026-06-16T14:32:07Z,1,init,OBC,S,0.03,490,0.187,0,6,60,184:21:02,46230,SCHED_FIFO,34573,Init system
+2026-06-16T14:32:07Z,2,kthreadd,OBC,S,0,124,0.047,-20,2,64,662:09:34,13558,SCHED_OTHER,75419,Kernel thread manager
+2026-06-16T14:32:07Z,101,obc_supervisor,OBC,S,1.29,3993,1.523,-5,5,42,360:43:40,11803,SCHED_FIFO,59506,Main OBC supervisor process
+2026-06-16T14:32:07Z,102,watchdog,OBC,S,0.03,260,0.099,-10,8,31,335:09:02,38599,SCHED_FIFO,38243,Hardware watchdog
+2026-06-16T14:32:07Z,103,fault_manager,OBC,S,0.35,2109,0.805,0,1,47,20:59:02,39492,SCHED_FIFO,4706,Fault detection and recovery
+2026-06-16T14:32:07Z,201,adcs_ctrl,ADCS,R,5.47,8400,3.204,5,3,38,272:08:42,17231,SCHED_OTHER,38602,Attitude determination and control
+2026-06-16T14:32:07Z,202,star_tracker,ADCS,R,3.17,6020,2.296,5,7,58,673:14:18,24901,SCHED_OTHER,11608,Star tracker image processing
+2026-06-16T14:32:07Z,203,magnetorquer_drv,ADCS,S,0.42,987,0.377,0,1,35,101:57:28,36344,SCHED_OTHER,6062,Magnetorquer driver
+2026-06-16T14:32:07Z,204,rw_controller,ADCS,R,2.76,2996,1.143,5,6,53,418:24:02,20629,SCHED_FIFO,40158,Reaction wheel controller
+2026-06-16T14:32:07Z,301,eps_monitor,EPS,S,0.8,2073,0.791,0,2,3,86:06:28,10978,SCHED_RR,70358,EPS housekeeping monitor
+2026-06-16T14:32:07Z,302,mppt_ctrl,EPS,S,0.32,1069,0.408,0,7,46,412:42:38,31493,SCHED_RR,70027,MPPT solar controller
+2026-06-16T14:32:07Z,303,battery_manager,EPS,S,0.54,1496,0.571,-5,8,26,165:47:00,33620,SCHED_RR,64852,Battery charge/discharge manager
+2026-06-16T14:32:07Z,401,comms_handler,COMMS,S,4.1,8481,3.235,5,4,21,345:46:47,34871,SCHED_RR,74893,Main communications handler
+2026-06-16T14:32:07Z,402,ax25_stack,COMMS,S,1.47,2078,0.793,5,4,20,435:52:07,38212,SCHED_RR,52816,AX.25 protocol stack
+2026-06-16T14:32:07Z,403,uplink_parser,COMMS,S,0.89,1546,0.59,5,4,29,303:21:44,27787,SCHED_OTHER,9483,Uplink command parser
+2026-06-16T14:32:07Z,404,downlink_queue,COMMS,S,1.16,1945,0.742,5,5,30,267:59:08,11396,SCHED_RR,21605,Downlink data queue manager
+2026-06-16T14:32:07Z,501,tcs_daemon,TCS,S,0.23,1065,0.406,0,7,59,514:42:40,29408,SCHED_FIFO,49624,Thermal control system daemon
+2026-06-16T14:32:07Z,502,heater_ctrl,TCS,S,0.3,492,0.188,0,6,52,706:26:43,22323,SCHED_OTHER,72017,Heater controller
+2026-06-16T14:32:07Z,601,payload_main,PAYLOAD,R,8.74,16401,6.256,10,7,47,645:55:20,39516,SCHED_RR,70909,Main payload controller
+2026-06-16T14:32:07Z,602,img_capture,PAYLOAD,R,6.37,33468,12.767,10,1,3,187:54:28,21463,SCHED_RR,24471,Image capture process
+2026-06-16T14:32:07Z,603,img_compress,PAYLOAD,R,9.11,24183,9.225,10,4,35,353:29:09,39944,SCHED_OTHER,88303,Image compression (CCSDS 122)
+2026-06-16T14:32:07Z,604,data_store,PAYLOAD,S,2.2,8381,3.197,5,6,41,120:19:25,39599,SCHED_FIFO,41321,On-board mass memory manager
+2026-06-16T14:32:07Z,701,logger,OBC,S,0.42,1997,0.762,-5,7,59,589:35:24,22588,SCHED_FIFO,58671,System event logger
+2026-06-16T14:32:07Z,702,telemetry_gen,OBC,S,1.71,3993,1.523,0,7,32,325:24:43,34227,SCHED_OTHER,51748,Telemetry frame generator
+2026-06-16T14:32:07Z,703,time_sync,OBC,S,0.09,518,0.198,0,5,60,02:54:59,30578,SCHED_OTHER,74162,On-board time synchronisation
+2026-06-16T14:32:07Z,704,health_check,OBC,S,0.33,1011,0.386,-5,1,4,216:46:14,45755,SCHED_RR,71706,Subsystem health check daemon
+2026-06-16T14:32:07Z,705,cmd_executor,OBC,S,0.42,2028,0.774,0,3,64,628:12:23,17909,SCHED_RR,79241,Telecommand executor
+2026-06-16T14:32:07Z,801,crypto_daemon,COMMS,S,0.73,2953,1.126,-5,3,29,574:52:17,24496,SCHED_RR,33297,Crypto/authentication daemon

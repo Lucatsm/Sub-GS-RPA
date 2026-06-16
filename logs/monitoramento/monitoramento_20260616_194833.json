@@ -1,0 +1,18 @@
+[
+  {
+    "timestamp": "2026-06-16T19:48:33.550740",
+    "pid": 5485,
+    "processo": "MainThread",
+    "cpu_percent": 9.1,
+    "memoria_percent": 6.49,
+    "status": "sleeping"
+  },
+  {
+    "timestamp": "2026-06-16T19:48:33.550740",
+    "pid": 10010,
+    "processo": "python",
+    "cpu_percent": 0.0,
+    "memoria_percent": 0.19,
+    "status": "running"
+  }
+]
