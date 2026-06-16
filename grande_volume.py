@@ -2,27 +2,41 @@
 
 import pandas as pd
 from pathlib import Path
+import json
 
 def processar_arquivos_telemetria(pasta_entrada: str = "telemetria_recebida"):
-    """Processa arquivos de telemetria com foco em temperatura, consumo de energia,
-    posicionamento orbital e estado dos equipamentos."""
+    """Processa arquivos de telemetria (CSV, JSON e Excel) com foco no arquivo JSON grande."""
     
     pasta = Path(pasta_entrada)
     arquivos = list(pasta.glob("*.csv")) + list(pasta.glob("*.json")) + list(pasta.glob("*.xlsx"))
     
     if not arquivos:
-        print("❌ Nenhum arquivo de telemetria encontrado.")
+        print("❌ Nenhum arquivo encontrado na pasta telemetria_recebida/")
         return None
     
     dados_consolidados = []
     
     for arquivo in arquivos:
         try:
-            if arquivo.suffix == ".csv":
+            print(f"📂 Processando: {arquivo.name}")
+            
+            if arquivo.suffix == ".json":
+                # Tratamento especial para o arquivo JSON grande
+                with open(arquivo, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                
+                # Extrai os registros (o que realmente importa)
+                records = data.get('records', [])
+                if records:
+                    df = pd.json_normalize(records, sep='_')
+                    print(f"   ✅ JSON processado: {len(df)} registros extraídos")
+                else:
+                    print("   ⚠️ Nenhum registro encontrado no JSON")
+                    continue
+                    
+            elif arquivo.suffix == ".csv":
                 df = pd.read_csv(arquivo)
-            elif arquivo.suffix == ".json":
-                df = pd.read_json(arquivo)
-            else:
+            else:  # Excel
                 df = pd.read_excel(arquivo)
             
             # Padronização de colunas
@@ -33,7 +47,6 @@ def processar_arquivos_telemetria(pasta_entrada: str = "telemetria_recebida"):
             df['data_processamento'] = pd.Timestamp.now()
             
             dados_consolidados.append(df)
-            print(f"✅ Processado: {arquivo.name} ({len(df)} registros)")
             
         except Exception as e:
             print(f"⚠️ Erro ao processar {arquivo.name}: {e}")
@@ -41,24 +54,18 @@ def processar_arquivos_telemetria(pasta_entrada: str = "telemetria_recebida"):
     if dados_consolidados:
         consolidado = pd.concat(dados_consolidados, ignore_index=True)
         
-        # Análise básica dos campos principais
-        relatorio = {
-            "Total_Registros": len(consolidado),
-            "Data_Processamento": pd.Timestamp.now(),
-            "Temperatura_Media": round(consolidado['temperatura'].mean(), 2) if 'temperatura' in consolidado.columns else None,
-            "Temperatura_Max": round(consolidado['temperatura'].max(), 2) if 'temperatura' in consolidado.columns else None,
-            "Consumo_Energia_Total": round(consolidado['consumo_energia'].sum(), 2) if 'consumo_energia' in consolidado.columns else None,
-            "Equipamentos_Anormais": len(consolidado[consolidado.get('estado_equipamento', '') == 'Anormal']) if 'estado_equipamento' in consolidado.columns else 0,
-        }
-        
         nome_saida = f"CONSOLIDADO_TELEMETRIA_{pd.Timestamp.now():%Y%m%d_%H%M%S}.csv"
         consolidado.to_csv(nome_saida, index=False, encoding='utf-8')
         
-        print(f"\n🎉 Processamento concluído!")
-        print(f"📊 Total de registros: {len(consolidado):,}")
-        print(f"🌡️  Temperatura média: {relatorio['Temperatura_Media']}°C")
-        print(f"⚡ Consumo total: {relatorio['Consumo_Energia_Total']} unidades")
+        print(f"\n🎉 Processamento finalizado com sucesso!")
+        print(f"📊 Total de registros consolidados: {len(consolidado):,}")
         print(f"📁 Arquivo salvo: {nome_saida}")
+        
+        # Mostrar algumas estatísticas úteis
+        if 'thermal_obc_temp_c' in consolidado.columns:
+            print(f"🌡️ Temperatura OBC média: {consolidado['thermal_obc_temp_c'].mean():.2f}°C")
+        if 'power_battery_soc_pct' in consolidado.columns:
+            print(f"🔋 SOC Bateria médio: {consolidado['power_battery_soc_pct'].mean():.2f}%")
         
         return consolidado
     return None

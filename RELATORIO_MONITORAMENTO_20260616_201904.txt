@@ -1,0 +1,31 @@
+=== RELATÓRIO DE MONITORAMENTO DE PROCESSOS EMBARCADOS ===
+
+Data da Análise: 2026-06-16 20:19:04
+Arquivo Origem: processos_embarcados.csv
+
+--- Resumo Geral ---
+Data_Analise: 2026-06-16 20:19:04
+Total_Processos: 28
+Processos_Ativos: 6
+CPU_Media: 1.91
+CPU_Max: 9.11
+Memoria_Media_pct: 1.91
+Memoria_Max_pct: 12.767
+
+--- Processos por Subsistema ---
+           cpu_pct  mem_pct  quantidade
+subsystem                              
+ADCS          2.96     1.76           4
+COMMS         1.67     1.30           5
+EPS           0.55     0.59           3
+OBC           0.47     0.63          10
+PAYLOAD       6.60     7.86           4
+TCS           0.26     0.30           2
+
+--- Top 5 Processos por Uso de CPU ---
+ process_name subsystem  cpu_pct  mem_pct state
+ img_compress   PAYLOAD     9.11    9.225     R
+ payload_main   PAYLOAD     8.74    6.256     R
+  img_capture   PAYLOAD     6.37   12.767     R
+    adcs_ctrl      ADCS     5.47    3.204     R
+comms_handler     COMMS     4.10    3.235     S

@@ -1,51 +1,76 @@
 # faça um pip install pandas openpyxl psutil antes de rodar os scripts se preferir tambem utilize um venv
 
-import psutil
-import datetime
-import json
-import time
+import pandas as pd
 from pathlib import Path
+import datetime
 
-def monitorar_tarefas_sistema():
-    """Monitora processos do sistema relacionados ao processamento de telemetria."""
+def monitorar_processos_embarcados(arquivo_csv: str = "processos_embarcados.csv"):
+    """Lê o arquivo CSV de processos embarcados e gera relatório de monitoramento."""
     
-    processos_relevantes = []
-    agora = datetime.datetime.now()
+    # Tenta encontrar o arquivo na pasta telemetria_recebida
+    caminho = Path(arquivo_csv)
+    if not caminho.exists():
+        caminho = Path("telemetria_recebida") / arquivo_csv
+        if not caminho.exists():
+            print(f"❌ Arquivo não encontrado: {arquivo_csv}")
+            return None
     
-    keywords = ['telemetria', 'satelite', 'missao', 'controle', 'python', 'pandas']
+    # Lê o CSV
+    df = pd.read_csv(caminho)
     
-    for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent', 'status', 'cmdline']):
-        try:
-            pinfo = proc.info
-            cmdline = ' '.join(pinfo.get('cmdline', [])).lower()
-            
-            if any(kw in (pinfo['name'] or '').lower() or kw in cmdline for kw in keywords) or \
-               pinfo['cpu_percent'] > 8 or pinfo['memory_percent'] > 15:
-                
-                processos_relevantes.append({
-                    'timestamp': agora.isoformat(),
-                    'pid': pinfo['pid'],
-                    'processo': pinfo['name'],
-                    'cpu_percent': round(pinfo['cpu_percent'], 2),
-                    'memoria_percent': round(pinfo['memory_percent'], 2),
-                    'status': pinfo['status']
-                })
-        except:
-            continue
+    print(f"✅ Arquivo carregado: {caminho.name}")
+    print(f"📊 Total de processos: {len(df)}")
     
-    pasta_logs = Path("logs/monitoramento")
-    pasta_logs.mkdir(parents=True, exist_ok=True)
+    # Análises principais
+    analise = {
+        'Data_Analise': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'Total_Processos': len(df),
+        'Processos_Ativos': len(df[df['state'] == 'R']),  # Running
+        'CPU_Media': round(df['cpu_pct'].mean(), 2),
+        'CPU_Max': df['cpu_pct'].max(),
+        'Memoria_Media_pct': round(df['mem_pct'].mean(), 2),
+        'Memoria_Max_pct': df['mem_pct'].max(),
+    }
     
-    nome_arquivo = pasta_logs / f"monitoramento_{agora.strftime('%Y%m%d_%H%M%S')}.json"
+    # Processos por subsistema
+    por_subsystem = df.groupby('subsystem').agg({
+        'cpu_pct': 'mean',
+        'mem_pct': 'mean',
+        'pid': 'count'
+    }).round(2)
+    por_subsystem = por_subsystem.rename(columns={'pid': 'quantidade'})
     
-    with open(nome_arquivo, "w", encoding="utf-8") as f:
-        json.dump(processos_relevantes, f, indent=2, ensure_ascii=False)
+    # Processos com maior consumo
+    top_cpu = df.nlargest(5, 'cpu_pct')[['process_name', 'subsystem', 'cpu_pct', 'mem_pct', 'state']]
     
-    print(f"✅ Monitoramento concluído - {len(processos_relevantes)} processos registrados.")
-    return processos_relevantes
+    # Salvar relatório
+    nome_relatorio = f"RELATORIO_MONITORAMENTO_{datetime.datetime.now():%Y%m%d_%H%M%S}.txt"
+    
+    with open(nome_relatorio, "w", encoding="utf-8") as f:
+        f.write("=== RELATÓRIO DE MONITORAMENTO DE PROCESSOS EMBARCADOS ===\n\n")
+        f.write(f"Data da Análise: {analise['Data_Analise']}\n")
+        f.write(f"Arquivo Origem: {caminho.name}\n\n")
+        
+        f.write("--- Resumo Geral ---\n")
+        for key, value in analise.items():
+            f.write(f"{key}: {value}\n")
+        
+        f.write("\n--- Processos por Subsistema ---\n")
+        f.write(por_subsystem.to_string())
+        
+        f.write("\n\n--- Top 5 Processos por Uso de CPU ---\n")
+        f.write(top_cpu.to_string(index=False))
+    
+    # Mostrar no terminal
+    print(f"\n🎯 Resumo do Monitoramento:")
+    print(f"   Total de Processos: {analise['Total_Processos']}")
+    print(f"   CPU Média: {analise['CPU_Media']}%")
+    print(f"   Memória Média: {analise['Memoria_Media_pct']}%")
+    print(f"   Processos em Execução (R): {analise['Processos_Ativos']}")
+    print(f"\n📁 Relatório completo salvo em: {nome_relatorio}")
+    
+    return df, analise
+
 
 if __name__ == "__main__":
-    print("🚀 Iniciando Monitoramento de Tasks...")
-    while True:
-        monitorar_tarefas_sistema()
-        time.sleep(60)
+    monitorar_processos_embarcados()
